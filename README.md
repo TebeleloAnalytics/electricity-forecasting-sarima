@@ -1,93 +1,63 @@
-# Forecasting Electricity Distribution in South Africa Using SARIMA Models
+# Forecasting Electricity Distribution in South Africa (SARIMA)
 
-## Overview
+My BSc Honours in Statistics research project (University of Limpopo, 2022). It forecasts monthly electricity distribution in South Africa with seasonal ARIMA (SARIMA) time-series models, focusing on Gauteng and Limpopo.
 
-This project was completed as part of my Bachelor of Science Honours in Statistics 
-at the University of Limpopo (2022). The study applies Seasonal Autoregressive 
-Integrated Moving Average (SARIMA) time series models to forecast short-term 
-electricity distribution in South Africa, focusing on Gauteng and Limpopo provinces.
-
-The research contributes to the existing time series literature by comparing multiple 
-SARIMA models and selecting the best-performing model for two-year electricity 
-distribution forecasts.
+**Result:** the best of three candidate models forecast monthly distribution with a **2.45% mean absolute percentage error** (MAPE). It was then used to produce a two-year forecast with 95% confidence intervals.
 
 ---
 
-## Problem Statement
+## Problem
 
-South Africa faces significant electricity supply and distribution challenges. 
-Accurate short-term forecasting of electricity distribution is critical for grid 
-management, infrastructure planning, and policy decisions. This study addresses 
-the need for reliable forecasting models using historical monthly electricity 
-distribution data.
-
----
+South Africa's electricity supply is under constant pressure. Accurate short- and medium-term forecasts of how much electricity will be distributed help with grid management, maintenance planning and energy purchasing.
 
 ## Data
 
-- **Source:** Statistics South Africa (Stats SA) — Eskom electricity distribution records
-- **Period:** January 2000 to January 2022 (264 monthly observations)
-- **Variable:** Electricity available for distribution (GWh — Gigawatt-hours)
-- **Provinces analysed:** Gauteng and Limpopo
-- **File:** `data/electricity_data.xlsx`
+- **Source:** Statistics South Africa, monthly electricity available for distribution, in gigawatt-hours (GWh)
+- **Period:** monthly observations from 2002 to 2022 (full table in the thesis appendix)
+- **File:** `Excel table from 2000.xlsx` (also `spss research data.sav` for SPSS)
 
----
+## Method (Box-Jenkins)
 
-## Methodology
+1. **Explore:** time-series plots to check for trend and seasonality, which peaks in the winter months of June and July
+2. **Test stationarity:** ACF/PACF plots and the Augmented Dickey-Fuller test
+3. **Difference:** first-order differencing for the trend and seasonal differencing (lag 12) for seasonality
+4. **Identify candidate models:** three SARIMA(p,d,q)(P,D,Q)₁₂ models chosen from the ACF/PACF patterns
+5. **Diagnose:** residual checks (autocorrelation, normality)
+6. **Select:** compared on RMSE, MAE, MAPE, R² and information criteria
+7. **Forecast:** two years ahead with 95% confidence intervals
 
-### Tools Used
-| Tool | Purpose |
-|------|---------|
-| Python | Data cleaning, manipulation, feature engineering, ARIMA modelling, visualisation |
-| R | Hypothesis testing (ADF, KPSS, Ljung-Box tests) |
-| SPSS | Supporting statistical analysis |
+## Results
 
-### Process
+| Model | R² | RMSE | MAE | MAPE |
+|---|---|---|---|---|
+| Model 1 | 94.8% | 55.78 | 36.25 | 2.56% |
+| Model 2 | 93.8% | 55.98 | 36.43 | 2.50% |
+| **Model 3 (selected)** | 94.1% | **54.60** | **35.72** | **2.45%** |
 
-**1. Exploratory Data Analysis**
-- Time series plot of raw electricity distribution data
-- Visual inspection for trend, seasonality and irregular components
+Model 3 had the lowest error on every accuracy measure and lost only on BIC, to Model 1. For context, average monthly distribution was about 1,456 GWh, so an average error of about 36 GWh is small.
 
-**2. Stationarity Testing**
-- ACF and PACF plots to identify non-stationarity
-- Augmented Dickey-Fuller (ADF) test
-- Kwiatkowski-Phillips-Schmidt-Shin (KPSS) test
+A sharp drop in April 2020 matches the COVID-19 lockdown. It's a good example of a real-world shock that a seasonal model can't anticipate.
 
-**3. Differencing**
-- First non-seasonal differencing to remove trend
-- Seasonal differencing (lag 12) to remove seasonality
-- Confirmed stationarity of differenced series via ADF test
+## Tools
 
-**4. Model Identification and Estimation**
-- Identified candidate SARIMA(p,d,q)(P,D,Q)₁₂ models from ACF and PACF patterns
-- Estimated three competing SARIMA models per province
-- Used Box-Jenkins methodology for model selection
+| Tool | Used for |
+|---|---|
+| Python (pandas, statsmodels, matplotlib) | Data preparation, stationarity tests, SARIMA modelling, plots |
+| SPSS | Model fit statistics and supporting analysis |
 
-**5. Model Diagnostics**
-- Ljung-Box test for residual autocorrelation
-- Q-Q plots for normality of residuals
-- Residual ACF and PACF plots
+## Files
 
-**6. Model Selection**
-- Compared models using AIC, BIC, and forecast error metrics
-- Selected best-performing SARIMA model per province
+| File | What it is |
+|---|---|
+| `Time Series.ipynb` | Python analysis notebook |
+| `Excel table from 2000.xlsx` | Source data |
+| `spss research data.sav` | Same data in SPSS format |
+| `Final Research_Selowa (2).docx` | Full research report (method, diagnostics, forecasts, references) |
 
-**7. Forecasting**
-- Generated two-year forecasts with 95% confidence intervals
-- Evaluated forecast accuracy using MAE, MAPE, and MSE
+**Note:** the notebook reads the data from CSV files (`data.csv`, `final.csv`), which were exported from the Excel table and aren't in this repo. To re-run it, export the relevant sheet from `Excel table from 2000.xlsx` to `data.csv`.
 
----
+## What I'd do now
 
-## Key Results
-
-- All three candidate SARIMA models produced acceptable fits for both provinces
-- The best-performing model was selected based on lowest information criteria 
-  and residual diagnostics
-- The selected SARIMA model successfully captured both the upward trend and 
-  monthly seasonal pattern (peaking in winter months — June/July)
-- Notable anomaly detected: April 2020 shows a significant drop consistent 
-  with COVID-19 lockdown impact on electricity demand
-
----
-
-## Repository Structure
+- Make the notebook fully reproducible: read straight from the Excel file and pin package versions
+- Add a hold-out test period (e.g. train to 2019, test on 2020–2021) so accuracy is measured on data the model never saw
+- Compare against simple baselines (seasonal naive) and newer methods such as Prophet or gradient boosting with calendar features
