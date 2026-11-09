@@ -1,6 +1,6 @@
 # Forecasting Electricity Distribution in South Africa (SARIMA)
 
-My BSc Honours in Statistics research project (University of Limpopo, 2022). It forecasts monthly electricity distribution in South Africa with seasonal ARIMA (SARIMA) time-series models, focusing on Gauteng and Limpopo.
+Research project I completed during BSc Honours in Statistics studies (University of Limpopo, 2022). It forecasts monthly electricity distribution in South Africa with seasonal ARIMA (SARIMA) time-series models, focusing on Gauteng and Limpopo.
 
 **Result:** the best of three candidate models forecast monthly distribution with a **2.45% mean absolute percentage error** (MAPE). It was then used to produce a two-year forecast with 95% confidence intervals.
 
